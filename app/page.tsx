@@ -1,9 +1,15 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import authenticate from "@/fingercomps/authenticate";
 
-const inter = Inter({ subsets: ['latin'] })
+const compId_sbs2023r3 = "wRUc0sQ2GqRatpuozQvh";
 
-export default function Home() {
+const inter = Inter({ subsets: ["latin"] });
+
+export default async function Home() {
+  const data = await authenticate(compId_sbs2023r3);
+  console.log("result is", data);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -18,7 +24,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -50,7 +56,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Docs{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -69,7 +75,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
+            Learn{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -88,7 +94,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Templates{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -107,7 +113,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Deploy{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -120,5 +126,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
