@@ -1,3 +1,5 @@
+import { Session } from "./types";
+
 const path =
   "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel";
 const method = "POST";
@@ -30,11 +32,6 @@ const payload = (compId: string) => ({
   ofs: "0",
   req0___data__: JSON.stringify(reqData(compId)),
 });
-
-type Session = {
-  gsessionid: string;
-  SID: string;
-};
 
 const authenticate = async (compId: string): Promise<Session> => {
   // send request to firestore with payload serialized as x-www-form-urlencoded

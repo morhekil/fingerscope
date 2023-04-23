@@ -1,14 +1,16 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import authenticate from "@/fingercomps/authenticate";
+import { results } from "@/fingercomps";
 
 const compId_sbs2023r3 = "wRUc0sQ2GqRatpuozQvh";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default async function Home() {
-  const data = await authenticate(compId_sbs2023r3);
-  console.log("result is", data);
+  const auth = await authenticate(compId_sbs2023r3);
+  const data = await results(auth);
+  console.log("results are", data);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
