@@ -1,16 +1,24 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
-import authenticate from "@/fingercomps/authenticate";
-import { results } from "@/fingercomps";
+import * as store from "@/store";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 
-const compId_sbs2023r3 = "wRUc0sQ2GqRatpuozQvh";
+const sbsOwnerID = "YToMTO4GhbbbAshq4I5rdPyQZyu2";
+const compId_sbs2022r3 = "wRUc0sQ2GqRatpuozQvh";
+const compId_sbs2023r1 = "kqHfTUe7e3XhJ0xfmNvV";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default async function Home() {
-  const auth = await authenticate(compId_sbs2023r3);
-  const data = await results(auth);
-  console.log("results are", data);
+  const competitions = await store.competitions(sbsOwnerID);
+  const comp = competitions[0].id;
+
+  console.log("competitions are:", competitions);
+  console.log("first competition details are:", await store.competition(comp));
+  console.log("categories are:", await store.categories(comp));
+  console.log("climbs are:", await store.climbs(comp));
+  console.log("quals are:", await store.quals(comp));
+  console.log("competitors are:", await store.competitors(comp));
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
