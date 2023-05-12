@@ -14,9 +14,14 @@ const getScore = (q: any, climbs: any[]): number => {
   return climb ? climb.score : 0
 }
 
-const getCompetitorName = (q: any, competitors: any[]): string => {
+const getCompetitor = (
+  q: any,
+  competitors: any[]
+): { name: string; category: string } => {
   const competitor = competitors.find((c) => c.no === q.competitorNo)
-  return competitor ? competitor.name : q.competitorNo
+  return competitor
+    ? { name: competitor.name, category: competitor.category }
+    : { name: q.competitorNo, category: '??' }
 }
 
 const RelScore = ({
@@ -59,7 +64,7 @@ const ClimbedBy = ({ climbNo, quals }: { climbNo: number; quals: any[] }) => {
   // in small grey text
   const competitors = quals
     .filter((q) => q.climbNo === climbNo)
-    .map((q) => q.competitorName)
+    .map((q) => `${q.competitor.name} ${q.competitor.category}`)
   const names = competitors.filter(
     (value, index, array) => array.indexOf(value) === index
   )
@@ -132,15 +137,15 @@ export default async function Competition({
   const competition = await store.competition(compId)
   const climbs = await store.climbs(compId)
   const competitors = (await store.competitors(compId)).filter(
-    (c) => c.category === 'MM'
+    (c) => c.category === 'MM' || c.category == 'OBW'
   )
   const myCompNo = competitors.find((c) => c.name === 'Oleg Ivanov')?.no || 0
   const quals: DocumentData[] = (await store.quals(compId))
-    .filter((q) => q.category === 'MM')
+    .filter((q) => q.category === 'MM' || q.category == 'OBW')
     .map((q) => ({
       ...q,
       score: getScore(q, climbs),
-      competitorName: getCompetitorName(q, competitors),
+      competitor: getCompetitor(q, competitors),
     }))
   const myTopQuals = quals
     .filter((q) => q.competitorNo === myCompNo)
