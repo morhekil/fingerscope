@@ -53,19 +53,19 @@ export function Header({ className }: { className?: string }): JSX.Element {
           <Logo className="h-6" />
         </Link>
       </div>
-      <div className="flex items-center gap-5">
+      {/* <div className="flex items-center gap-5">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-8">
-            {/* <TopLevelNavItem href="/">API</TopLevelNavItem>
+            <TopLevelNavItem href="/">API</TopLevelNavItem>
             <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-            <TopLevelNavItem href="#">Support</TopLevelNavItem> */}
+            <TopLevelNavItem href="#">Support</TopLevelNavItem>
           </ul>
         </nav>
         <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
         <div className="hidden min-[416px]:contents">
           <Button href="#">Sign in</Button>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
