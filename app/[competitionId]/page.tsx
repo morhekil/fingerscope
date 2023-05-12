@@ -146,7 +146,8 @@ export default async function Competition({
     .filter((q) => q.competitorNo === myCompNo)
     .sort((a, b) => b.score - a.score)
     .slice(0, 8)
-  const myMinQual = Math.min(0, ...myTopQuals.map((q) => q.score))
+  const myMinQual =
+    myTopQuals.length > 0 ? Math.min(...myTopQuals.map((q) => q.score)) : 0
 
   return (
     <div className="lg:ml-72 xl:ml-80">
