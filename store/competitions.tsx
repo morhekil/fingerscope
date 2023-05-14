@@ -1,40 +1,61 @@
-import { Firestore, collection, doc, getDoc, getDocs } from 'firebase/firestore'
-import { db } from './firebase'
+import { z } from 'zod'
+import { Timestamp, getDoc, orderBy, query } from 'firebase/firestore'
+import { doc, collection, getDocs } from './firebase'
 
-const competition = async (id: string) => {
+const timestampSchema = z
+  .object({
+    seconds: z.number(),
+    nanoseconds: z.number(),
+  })
+  .transform((ts) => new Timestamp(ts.seconds, ts.nanoseconds).toDate())
+
+const competitionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  owner: z.string(),
+  live: z.boolean(),
+  scoreEntryEnabled: z.boolean(),
+  scoreBoardEnabled: z.boolean(),
+  created: timestampSchema,
+})
+
+type Competition = z.infer<typeof competitionSchema>
+
+const competition = async (id: string): Promise<Competition> => {
   const path = `competitions/${id}`
-  const resref = doc(db, path)
-  return (await getDoc(resref)).data()!
+  const resref = doc(path)
+  const data = (await getDoc(resref)).data()!
+  return competitionSchema.parse({ id, ...data })
 }
 
-export { competition }
-
-const competitions = async (ownerID: string) =>
-  (await getDocs(collection(db, `competitions`))).docs
-    .filter((doc) => doc.data().owner === ownerID)
-    .map((doc) => ({ id: doc.id, ...doc.data() }))
-    // @ts-ignore
-    .map(({ id, name, created }) => ({ id, name, created }))
-    .sort((a, b) => b.created - a.created)
+const competitions = async (ownerID: string) => {
+  return (
+    // (await getDocs(q)).docs
+    (await getDocs('competitions', { orderBy: ['created', 'desc'] }))
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      // @ts-ignore
+      .filter((doc) => doc.owner === ownerID)
+      // @ts-ignore
+      .map(({ id, name, created }) => ({ id, name, created }))
+  )
+}
 
 const categories = async (comp: string) =>
-  (await getDocs(collection(db, `competitions/${comp}/categories`))).docs.map(
-    (doc) => doc.id
-  )
+  (await getDocs(`competitions/${comp}/categories`)).map((doc) => doc.id)
 
 const climbs = async (comp: string) =>
-  (await getDocs(collection(db, `competitions/${comp}/climbs`))).docs
+  (await getDocs(`competitions/${comp}/climbs`))
     .map((doc) => doc.data())
     .map(({ climbNo, marking, score }) => ({ climbNo, marking, score }))
     .sort((a, b) => b.score - a.score)
 
 const quals = async (comp: string) =>
-  (
-    await getDocs(collection(db, `competitions/${comp}/qualificationScores`))
-  ).docs.map((doc) => doc.data())
+  (await getDocs(`competitions/${comp}/qualificationScores`)).map((doc) =>
+    doc.data()
+  )
 
 const competitors = async (comp: string) =>
-  (await getDocs(collection(db, `competitions/${comp}/competitors`))).docs
+  (await getDocs(`competitions/${comp}/competitors`))
     .map((doc) => doc.data())
     .map(({ firstName, competitorNo, category }) => ({
       name: firstName,
@@ -42,4 +63,4 @@ const competitors = async (comp: string) =>
       category,
     }))
 
-export { competitions, categories, climbs, quals, competitors }
+export { competition, competitions, categories, climbs, quals, competitors }
