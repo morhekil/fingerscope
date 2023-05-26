@@ -3,8 +3,6 @@ import Link from 'next/link'
 import { Footer } from '@/app/Footer'
 import { Header } from '@/app/Header'
 import { Logo } from '@/components/Logo'
-// import { Navigation } from '@/components/Navigation'
-// import { Prose } from '@/components/Prose'
 
 import * as store from '@/store'
 import { DocumentData } from 'firebase/firestore'
@@ -130,22 +128,35 @@ const MyResult = ({
 
 export default async function Competition({
   params,
+  searchParams,
 }: {
   params: { competitionId: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   const compId = params.competitionId
   const competition = await store.competition(compId)
   const climbs = await store.climbs(compId)
-  const competitors = (await store.competitors(compId)).filter(
-    (c) => c.category === 'MM' || c.category == 'OBW'
+
+  const allCompetitors = await store.competitors(compId)
+
+  const climber = (searchParams || {})['climber']
+  const myCompNo = parseInt(climber?.toString() || '0')
+  const myClimber = allCompetitors.find((c) => c.no === myCompNo)
+  const refCategories =
+    !myClimber || myClimber.category == 'MM'
+      ? ['MM', 'OBW']
+      : ['MM', 'OBW', myClimber.category]
+
+  const myCompetitors = allCompetitors.filter((c) =>
+    refCategories.includes(c.category)
   )
-  const myCompNo = competitors.find((c) => c.name === 'Oleg Ivanov')?.no || 0
+
   const quals: DocumentData[] = (await store.quals(compId))
-    .filter((q) => q.category === 'MM' || q.category == 'OBW')
+    .filter((q) => refCategories.includes(q.category))
     .map((q) => ({
       ...q,
       score: getScore(q, climbs),
-      competitor: getCompetitor(q, competitors),
+      competitor: getCompetitor(q, myCompetitors),
     }))
   const myTopQuals = quals
     .filter((q) => q.competitorNo === myCompNo)
@@ -164,77 +175,91 @@ export default async function Competition({
             </Link>
           </div>
           <Header />
-          {/* <Navigation className="hidden lg:mt-10 lg:block" /> */}
         </div>
       </header>
       <div className="relative px-4 pt-14 sm:px-6 lg:px-8">
         <main className="py-8">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-              {competition.name}
-            </h2>
-          </div>
+          <article className="prose">
+            <div className="min-w-0 flex-1">
+              <h2 className="mt-0 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                Comp: <Link href="/">{competition.name}</Link>
+              </h2>
+              <h3>
+                Climber:{' '}
+                <Link href={`/${compId}/climbers`}>
+                  {myClimber ? (
+                    `${myClimber.name}, ${myClimber.category} ${myClimber.no}`
+                  ) : (
+                    <i>click to select</i>
+                  )}
+                </Link>
+                , ref categories: {refCategories.join(', ')}
+              </h3>
+            </div>
 
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                >
-                  Mark
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                >
-                  No
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                >
-                  Score
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                >
-                  Result
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {climbs.map((climb) => (
-                <tr key={climb.climbNo}>
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                    {climb.marking}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {climb.climbNo}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {climb.score}
-                    &nbsp;
-                    <RelScore
-                      climb={climb}
-                      minScore={myMinQual}
-                      quals={quals}
-                      myCompNo={myCompNo}
-                    />
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    <MyResult
-                      climb={climb}
-                      quals={quals}
-                      myCompNo={myCompNo}
-                      myMinQual={myMinQual}
-                    />
-                  </td>
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead>
+                <tr>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                  >
+                    Mark
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    No
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Score
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Result
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {climbs.map((climb) => (
+                  <tr key={climb.climbNo}>
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                      {climb.marking}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {climb.climbNo}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {climb.score}
+                      &nbsp;
+                      {myClimber && (
+                        <RelScore
+                          climb={climb}
+                          minScore={myMinQual}
+                          quals={quals}
+                          myCompNo={myCompNo}
+                        />
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <MyResult
+                        climb={climb}
+                        quals={quals}
+                        myCompNo={myCompNo}
+                        myMinQual={myMinQual}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </article>
         </main>
         <Footer />
       </div>
