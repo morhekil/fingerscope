@@ -1,31 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import clsx from 'clsx'
 
-import { Button } from '@/components/Button'
-import { Logo } from '@/components/Logo'
-import {
-  MobileNavigation,
-  useIsInsideMobileNavigation,
-} from '@/components/MobileNavigation'
-import { useMobileNavigationStore } from '@/components/MobileNavigation'
-
-// function TopLevelNavItem({ href, children }) {
-//   return (
-//     <li>
-//       <Link
-//         href={href}
-//         className="text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-//       >
-//         {children}
-//       </Link>
-//     </li>
-//   )
-// }
+import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
+import ReloadPageButton from '@/components/ReloadPageButton'
 
 export function Header({ className }: { className?: string }): JSX.Element {
-  let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
 
   return (
@@ -40,32 +20,9 @@ export function Header({ className }: { className?: string }): JSX.Element {
           : 'bg-white/0.9 dark:bg-zinc-900/0.8'
       )}
     >
-      <div
-        className={clsx(
-          'absolute inset-x-0 top-full h-px transition',
-          (isInsideMobileNavigation || !mobileNavIsOpen) &&
-            'bg-zinc-900/7.5 dark:bg-white/7.5'
-        )}
-      />
       <div className="flex items-center gap-5 lg:hidden">
-        <MobileNavigation />
-        <Link href="/" aria-label="Home">
-          <Logo className="h-6" />
-        </Link>
+        <ReloadPageButton />
       </div>
-      {/* <div className="flex items-center gap-5">
-        <nav className="hidden md:block">
-          <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="/">API</TopLevelNavItem>
-            <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-            <TopLevelNavItem href="#">Support</TopLevelNavItem>
-          </ul>
-        </nav>
-        <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
-        <div className="hidden min-[416px]:contents">
-          <Button href="#">Sign in</Button>
-        </div>
-      </div> */}
     </div>
   )
 }
