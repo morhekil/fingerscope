@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { Footer } from '@/app/Footer'
 import { Header } from '@/app/Header'
-import { Logo } from '@/components/Logo'
 
 import * as store from '@/store'
 import { DocumentData } from 'firebase/firestore'
