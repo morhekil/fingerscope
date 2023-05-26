@@ -13,7 +13,7 @@ const competitionSchema = z.object({
   id: z.string(),
   name: z.string(),
   owner: z.string(),
-  live: z.boolean(),
+  live: z.boolean().default(false),
   scoreEntryEnabled: z.boolean(),
   scoreBoardEnabled: z.boolean(),
   created: timestampSchema,
