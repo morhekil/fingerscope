@@ -19,7 +19,19 @@ const competitionSchema = z.object({
   created: timestampSchema,
 })
 
-type Competition = z.infer<typeof competitionSchema>
+export type Competition = z.infer<typeof competitionSchema>
+
+export type Competitor = {
+  name: string
+  no: number
+  category: string
+}
+
+export type Climb = {
+  climbNo: number
+  marking: string
+  score: number
+}
 
 const competition = async (id: string): Promise<Competition> => {
   const path = `competitions/${id}`
@@ -43,7 +55,7 @@ const competitions = async (ownerID: string) => {
 const categories = async (comp: string) =>
   (await getDocs(`competitions/${comp}/categories`)).map((doc) => doc.id)
 
-const climbs = async (comp: string) =>
+const climbs = async (comp: string): Promise<Climb[]> =>
   (await getDocs(`competitions/${comp}/climbs`))
     .map((doc) => doc.data())
     .map(({ climbNo, marking, score }) => ({ climbNo, marking, score }))
@@ -54,7 +66,7 @@ const quals = async (comp: string) =>
     doc.data()
   )
 
-const competitors = async (comp: string) =>
+const competitors = async (comp: string): Promise<Competitor[]> =>
   (await getDocs(`competitions/${comp}/competitors`))
     .map((doc) => doc.data())
     .map(({ firstName, competitorNo, category }) => ({
