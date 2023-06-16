@@ -15,7 +15,7 @@ export default async function Home() {
       <Header>
         <h1>Select comp</h1>
       </Header>
-      <div className="relative px-4 pt-14 sm:px-6 lg:px-8">
+      <div className="relative px-4 sm:px-6 lg:px-8">
         <main className="py-8">
           <ul role="list" className="divide-y divide-gray-100">
             {competitions.map((comp) => (

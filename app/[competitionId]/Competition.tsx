@@ -237,7 +237,7 @@ export default function Competition({
           onChange={searchClimb}
         />
       </Header>
-      <div className="relative px-4 pt-14 sm:px-6 lg:px-8">
+      <div className="relative px-4 sm:px-6 lg:px-8">
         <main className="py-8">
           <article className="prose">
             <Titles
