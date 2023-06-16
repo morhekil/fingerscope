@@ -40,15 +40,13 @@ const competition = async (id: string): Promise<Competition> => {
   return competitionSchema.parse({ id, ...data })
 }
 
-const competitions = async (ownerID: string) => {
+const competitions = async (ownerID: string): Promise<Competition[]> => {
   return (
-    // (await getDocs(q)).docs
     (await getDocs('competitions', { orderBy: ['created', 'desc'] }))
       .map((doc) => ({ id: doc.id, ...doc.data() }))
       // @ts-ignore
       .filter((doc) => doc.owner === ownerID)
-      // @ts-ignore
-      .map(({ id, name, created }) => ({ id, name, created }))
+      .map((doc) => competitionSchema.parse(doc))
   )
 }
 

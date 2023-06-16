@@ -27,9 +27,7 @@ export default async function Home() {
                         {comp.name}
                       </p>
                       <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                        {new Date(
-                          comp.created.seconds * 1000
-                        ).toLocaleDateString()}
+                        {comp.created.toLocaleDateString()}
                       </p>
                     </Link>
                   </div>
