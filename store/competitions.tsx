@@ -21,6 +21,18 @@ const competitionSchema = z.object({
 
 export type Competition = z.infer<typeof competitionSchema>
 
+const qualSchema = z.object({
+  climbNo: z.number(),
+  competitorNo: z.number(),
+  category: z.string(),
+  attempts: z.number(),
+  topped: z.boolean(),
+  flash: z.boolean(),
+  created: timestampSchema,
+})
+
+export type Qual = z.infer<typeof qualSchema>
+
 export type Competitor = {
   name: string
   no: number
@@ -59,9 +71,9 @@ const climbs = async (comp: string): Promise<Climb[]> =>
     .map(({ climbNo, marking, score }) => ({ climbNo, marking, score }))
     .sort((a, b) => b.score - a.score)
 
-const quals = async (comp: string) =>
+const quals = async (comp: string): Promise<Qual[]> =>
   (await getDocs(`competitions/${comp}/qualificationScores`)).map((doc) =>
-    doc.data()
+    qualSchema.parse(doc.data())
   )
 
 const competitors = async (comp: string): Promise<Competitor[]> =>

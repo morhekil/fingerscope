@@ -5,9 +5,9 @@ import { Footer } from '@/app/Footer'
 import { Header } from '@/app/Header'
 
 import * as store from '@/store'
-import { DocumentData } from 'firebase/firestore'
 import ReloadPageButton from '@/components/ReloadPageButton'
 import { ChangeEventHandler, memo, useMemo, useState } from 'react'
+import { Qual } from '@/components/quals'
 
 const Climb = memo(
   ({
@@ -19,7 +19,7 @@ const Climb = memo(
     climb: store.Climb
     myClimber?: store.Competitor
     myMinQual: number
-    quals: DocumentData[]
+    quals: Qual[]
   }) => (
     <tr key={climb.climbNo} id={`climbno-${climb.climbNo}`}>
       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
@@ -61,7 +61,7 @@ const RelScore = ({
 }: {
   climb: store.Climb
   minScore: number
-  quals: DocumentData[]
+  quals: store.Qual[]
   myCompNo: number
 }) => {
   const relScore = climb.score - minScore
@@ -119,7 +119,7 @@ const MyResult = ({
   myCompNo,
 }: {
   climb: store.Climb
-  quals: DocumentData[]
+  quals: Qual[]
   myMinQual: number
   myCompNo: number | undefined
 }) => {
@@ -195,7 +195,7 @@ export default function Competition({
   climbs,
 }: {
   competition: store.Competition
-  quals: DocumentData[]
+  quals: Qual[]
   myClimber?: store.Competitor
   refCategories: string[]
   climbs: store.Climb[]
