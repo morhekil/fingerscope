@@ -79,8 +79,8 @@ const quals = async (comp: string): Promise<Qual[]> =>
 const competitors = async (comp: string): Promise<Competitor[]> =>
   (await getDocs(`competitions/${comp}/competitors`))
     .map((doc) => doc.data())
-    .map(({ firstName, competitorNo, category }) => ({
-      name: firstName,
+    .map(({ firstName, lastName, competitorNo, category }) => ({
+      name: firstName || lastName,
       no: competitorNo,
       category,
     }))
